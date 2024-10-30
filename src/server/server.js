@@ -1,31 +1,42 @@
-import express from "express";
-import { createServer } from "http";
-import { Server } from "socket.io";
+/* eslint-disable @typescript-eslint/no-require-imports */
+require("dotenv").config();
+
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const cors = require("cors");
 
 const app = express();
-const server = createServer(app);
-const io = new Server(server);
+const server = http.createServer(app);
 
-// Serve static files from the Next.js app
-app.use(express.static("out"));
+app.use(
+  cors({
+    origin: [
+      process.env.CLIENT_URL,
+      "https://realtime-whiteboard-l4cw.onrender.com",
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 
 io.on("connection", (socket) => {
-  console.log("A user connected");
-
+  console.log("a user connected");
   socket.on("draw", (data) => {
+    console.log("Draw event received:", data); // Add this line
+
     socket.broadcast.emit("draw", data);
-  });
-
-  socket.on("clear", () => {
-    socket.broadcast.emit("clear");
-  });
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
   });
 });
 
-const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+server.listen(4000, () => {
+  console.log("listening");
 });
