@@ -1,5 +1,5 @@
 import React from "react";
-import { SketchPicker } from "react-color";
+import { CirclePicker } from "react-color";
 
 const ColorPicker = ({
   color,
@@ -10,11 +10,7 @@ const ColorPicker = ({
 }) => {
   return (
     <div>
-      <SketchPicker
-        color={color}
-        onChangeComplete={onColorChange}
-        disableAlpha={true}
-      />
+      <CirclePicker color={color} onChangeComplete={onColorChange} />
     </div>
   );
 };
