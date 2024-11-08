@@ -6,7 +6,7 @@ import socket from "../../socket";
 export const Whiteboard = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [drawing, setDrawing] = useState(false);
-  const [color, setColor] = useState("#000000"); // Default color
+  const [color, setColor] = useState("#000000");
 
   useEffect(() => {
     const canvas = canvasRef.current;
