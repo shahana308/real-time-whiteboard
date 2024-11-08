@@ -31,9 +31,32 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("a user connected");
   socket.on("draw", (data) => {
-    console.log("Draw event received:", data); // Add this line
+    console.log("Draw event received:", data);
 
     socket.broadcast.emit("draw", data);
+  });
+
+  socket.on("startDrawing", () => {
+    console.log("Start drawing event received");
+    socket.broadcast.emit("startDrawing");
+  });
+
+  // Broadcast end of drawing to other clients
+  socket.on("endDrawing", () => {
+    console.log("End drawing event received");
+    socket.broadcast.emit("endDrawing");
+  });
+
+  // Broadcast begin path to reset paths on other clients
+  socket.on("beginPath", (data) => {
+    console.log("Begin path event received:", data);
+    socket.broadcast.emit("beginPath", data);
+  });
+
+  // Broadcast clear action to all clients
+  socket.on("clear", () => {
+    console.log("Clear event received");
+    socket.broadcast.emit("clear");
   });
 });
 

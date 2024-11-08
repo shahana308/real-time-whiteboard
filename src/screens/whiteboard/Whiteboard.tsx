@@ -15,22 +15,30 @@ export const Whiteboard = () => {
     const context = canvas.getContext("2d");
     if (!context) return;
 
-    // Draw based on normalized percentages for consistency across clients
-    const draw = (xPercent: number, yPercent: number, drawColor = color) => {
+    const draw = (
+      xPercent: number,
+      yPercent: number,
+      drawColor = color,
+      move = true
+    ) => {
       const x = xPercent * canvas.width;
       const y = yPercent * canvas.height;
       context.strokeStyle = drawColor;
-      context.lineTo(x, y);
-      context.stroke();
+      if (move) {
+        context.lineTo(x, y);
+        context.stroke();
+      } else {
+        context.moveTo(x, y);
+      }
     };
 
     const handleMouseDown = (e: MouseEvent) => {
-      context.beginPath(); // Start a new path
       const xPercent = (e.clientX - canvas.offsetLeft) / canvas.width;
       const yPercent = (e.clientY - canvas.offsetTop) / canvas.height;
-      context.moveTo(xPercent * canvas.width, yPercent * canvas.height);
+      context.beginPath();
+      draw(xPercent, yPercent, color, false); // Move to the starting point without drawing
       setDrawing(true);
-      socket.emit("beginPath"); // Emit beginPath event to reset paths on other clients
+      socket.emit("beginPath", { xPercent, yPercent, color }); // Emit beginPath event to reset paths on other clients
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -43,8 +51,11 @@ export const Whiteboard = () => {
     };
 
     const handleMouseUp = () => {
-      context.closePath();
-      setDrawing(false);
+      if (drawing) {
+        context.closePath();
+        setDrawing(false);
+        socket.emit("endDrawing");
+      }
     };
 
     const handleClear = () => {
@@ -61,24 +72,33 @@ export const Whiteboard = () => {
     // Listen for clear events
     socket.on("clear", handleClear);
 
-    // Reset path on other clients whenever a new drawing starts
-    socket.on("beginPath", () => {
+    // Listen for begin path events from other clients
+    socket.on("beginPath", ({ xPercent, yPercent, color: drawColor }) => {
       context.beginPath();
+      draw(xPercent, yPercent, drawColor, false);
+    });
+
+    // Stop drawing when other clients indicate the drawing has ended
+    socket.on("endDrawing", () => {
+      context.closePath();
     });
 
     canvas.addEventListener("mousedown", handleMouseDown);
     canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseup", handleMouseUp);
+    canvas.addEventListener("mouseleave", handleMouseUp); // Handle case where mouse leaves canvas while drawing
 
     return () => {
-      
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseup", handleMouseUp);
+      canvas.removeEventListener("mouseleave", handleMouseUp);
     };
   }, [drawing, color]);
 
-  const handleColorChange = (newColor: { hex: React.SetStateAction<string> }) => {
+  const handleColorChange = (newColor: {
+    hex: React.SetStateAction<string>;
+  }) => {
     setColor(newColor.hex);
   };
 
