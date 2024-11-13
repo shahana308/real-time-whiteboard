@@ -1,3 +1,58 @@
-# Realtime White Board
+# Real-Time Whiteboard
 
-The Real-Time Whiteboard Application allows multiple users to draw, collaborate, and share ideas in real-time. This application leverages Next.js for the frontend and a built-in Node.js backend, utilizing WebSocket for real-time communication.
+This project is a real-time collaborative whiteboard, allowing users to draw and interact with each other through a shared canvas. It includes various tools and customization features to provide a rich drawing experience.
+
+## Features
+
+- **Real-Time Drawing**: Multiple users can draw simultaneously on the canvas, and all actions are synchronized in real-time.
+- **Color Selection**: Two different types of color pickers are available (Circle and Swatch), allowing users to easily pick from a wide range of colors.
+- **Brush Size Selection**: Users can customize the brush size using a range slider to fit their drawing needs.
+- **Brush Types**: The whiteboard supports different brush types:
+  - Normal
+  - Blurred
+  - Dotted
+- **Clear Canvas**: Users can clear the entire whiteboard with a single button.
+- **Simple UI**: The user interface is clean, with easy access to all tools, including color pickers, brush settings, and more.
+
+## Deployment
+
+The project is deployed and accessible at:
+
+[https://real-time-whiteboard-sand.vercel.app/whiteboard](https://real-time-whiteboard-sand.vercel.app/whiteboard)
+
+## Tech Stack
+
+- **Frontend**: React, TypeScript, Tailwind CSS, Ant Design
+- **Backend**: Node.js, Socket.io for real-time communication
+- **Deployment**: Vercel for hosting the front-end, making it accessible globally
+
+## Installation and Setup
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/yourusername/real-time-whiteboard.git
+   cd real-time-whiteboard
+   ```
+2. Install the dependencies:
+   ```sh
+   npm install
+   ```
+3. Start the server:
+   ```sh
+   npm start
+   ```
+4. Open your browser and navigate to `http://localhost:3000/whiteboard` to use the whiteboard locally.
+
+## Usage
+
+- Open the whiteboard in your browser and start drawing.
+- Select colors and brush types to customize your drawing experience.
+- Invite others to join and collaborate in real time by sharing the deployment link.
+
+## Contributions
+
+Contributions are welcome! If you'd like to improve or add features, please fork the repository and submit a pull request.
+
+## License
+
+This project is licensed under the MIT License.
