@@ -39,7 +39,7 @@ The project is deployed and accessible at:
    ```
 3. Start the server:
    ```sh
-   npm start
+   npm run dev
    ```
 4. Open your browser and navigate to `http://localhost:3000/whiteboard` to use the whiteboard locally.
 

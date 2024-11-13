@@ -4,35 +4,31 @@ require("dotenv").config();
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-const cors = require("cors");
 
 const app = express();
 const server = http.createServer(app);
 
+const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
 app.use(
   cors({
-    origin: [
-      process.env.CLIENT_URL,
-      "https://realtime-whiteboard-l4cw.onrender.com",
-    ],
+    origin: [process.env.CLIENT_URL],
     methods: ["GET", "POST"],
     credentials: true,
   })
 );
-
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: clientUrl,
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("A user connected");
+
   socket.on("draw", (data) => {
     console.log("Draw event received:", data);
-
     socket.broadcast.emit("draw", data);
   });
 
@@ -58,8 +54,12 @@ io.on("connection", (socket) => {
     console.log("Clear event received");
     socket.broadcast.emit("clear");
   });
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
 });
 
 server.listen(4000, () => {
-  console.log("listening");
+  console.log("Backend server is listening on port 4000");
 });
