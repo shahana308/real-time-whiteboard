@@ -1,7 +1,9 @@
 "use client";
-import ColorPicker from "./ColorPicker";
+import CircleColorPicker from "./CircleColorPicker";
 import React, { useEffect, useRef, useState } from "react";
 import socket from "../../socket";
+import { Typography } from "antd";
+import SwatchColorPicker from "./SwatchColorPicker";
 
 export const Whiteboard = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -103,14 +105,32 @@ export const Whiteboard = () => {
   };
 
   return (
-    <div>
-      <ColorPicker color={color} onColorChange={handleColorChange} />
-      <canvas
-        ref={canvasRef}
-        width={800}
-        height={600}
-        style={{ border: "1px solid black" }}
-      />
+    <div className="m-10">
+      <Typography.Title>Whiteboard</Typography.Title>
+      <div className="flex gap-x-20">
+        <div className="flex flex-col gap-y-10">
+          <div className="border border-slate-50 shadow-lg	p-6 rounded-2xl">
+            <SwatchColorPicker
+              color={color}
+              onColorChange={handleColorChange}
+            />
+          </div>
+          <div className="border border-slate-50 shadow-lg	p-6 rounded-2xl">
+            <CircleColorPicker
+              color={color}
+              onColorChange={handleColorChange}
+            />
+          </div>
+        </div>
+        <div>
+          <canvas
+            ref={canvasRef}
+            width={800}
+            height={600}
+            style={{ border: "1px solid gray", borderRadius: "50px" }}
+          />
+        </div>
+      </div>
       {/* <button onClick={handleClear}>Clear</button> */}
     </div>
   );
