@@ -1,14 +1,15 @@
 "use client";
-import CircleColorPicker from "./CircleColorPicker";
 import React, { useEffect, useRef, useState } from "react";
 import socket from "../../socket";
-import { Typography } from "antd";
 import SwatchColorPicker from "./SwatchColorPicker";
+import CircleColorPicker from "./CircleColorPicker";
+import { Typography } from "antd";
 
 export const Whiteboard = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [drawing, setDrawing] = useState(false);
-  const [color, setColor] = useState("#000000");
+  const [color, setColor] = useState("#000000"); // Default color
+  const [brushSize, setBrushSize] = useState(5); // Default brush size
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -17,30 +18,33 @@ export const Whiteboard = () => {
     const context = canvas.getContext("2d");
     if (!context) return;
 
+    // Set the initial brush size and style
+    context.lineWidth = brushSize;
+    context.lineCap = "round";
+    context.strokeStyle = color;
+
+    // Draw based on normalized percentages for consistency across clients
     const draw = (
       xPercent: number,
       yPercent: number,
       drawColor = color,
-      move = true
+      size = brushSize
     ) => {
       const x = xPercent * canvas.width;
       const y = yPercent * canvas.height;
       context.strokeStyle = drawColor;
-      if (move) {
-        context.lineTo(x, y);
-        context.stroke();
-      } else {
-        context.moveTo(x, y);
-      }
+      context.lineWidth = size;
+      context.lineTo(x, y);
+      context.stroke();
     };
 
     const handleMouseDown = (e: MouseEvent) => {
+      context.beginPath(); // Start a new path
       const xPercent = (e.clientX - canvas.offsetLeft) / canvas.width;
       const yPercent = (e.clientY - canvas.offsetTop) / canvas.height;
-      context.beginPath();
-      draw(xPercent, yPercent, color, false); // Move to the starting point without drawing
+      context.moveTo(xPercent * canvas.width, yPercent * canvas.height);
       setDrawing(true);
-      socket.emit("beginPath", { xPercent, yPercent, color }); // Emit beginPath event to reset paths on other clients
+      socket.emit("beginPath"); // Emit beginPath event to reset paths on other clients
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -48,16 +52,13 @@ export const Whiteboard = () => {
         const xPercent = (e.clientX - canvas.offsetLeft) / canvas.width;
         const yPercent = (e.clientY - canvas.offsetTop) / canvas.height;
         draw(xPercent, yPercent);
-        socket.emit("draw", { xPercent, yPercent, color });
+        socket.emit("draw", { xPercent, yPercent, color, size: brushSize });
       }
     };
 
     const handleMouseUp = () => {
-      if (drawing) {
-        context.closePath();
-        setDrawing(false);
-        socket.emit("endDrawing");
-      }
+      context.closePath();
+      setDrawing(false);
     };
 
     const handleClear = () => {
@@ -67,41 +68,39 @@ export const Whiteboard = () => {
 
     // Listen for draw events from other clients
     socket.on("draw", (data) => {
-      const { xPercent, yPercent, color: drawColor } = data;
-      draw(xPercent, yPercent, drawColor);
+      const { xPercent, yPercent, color: drawColor, size } = data;
+      draw(xPercent, yPercent, drawColor, size);
     });
 
     // Listen for clear events
     socket.on("clear", handleClear);
 
-    // Listen for begin path events from other clients
-    socket.on("beginPath", ({ xPercent, yPercent, color: drawColor }) => {
+    // Reset path on other clients whenever a new drawing starts
+    socket.on("beginPath", () => {
       context.beginPath();
-      draw(xPercent, yPercent, drawColor, false);
-    });
-
-    // Stop drawing when other clients indicate the drawing has ended
-    socket.on("endDrawing", () => {
-      context.closePath();
     });
 
     canvas.addEventListener("mousedown", handleMouseDown);
     canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseup", handleMouseUp);
-    canvas.addEventListener("mouseleave", handleMouseUp); // Handle case where mouse leaves canvas while drawing
 
     return () => {
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseup", handleMouseUp);
-      canvas.removeEventListener("mouseleave", handleMouseUp);
     };
-  }, [drawing, color]);
+  }, [drawing, color, brushSize]);
 
   const handleColorChange = (newColor: {
     hex: React.SetStateAction<string>;
   }) => {
     setColor(newColor.hex);
+  };
+
+  const handleBrushSizeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setBrushSize(Number(event.target.value));
   };
 
   return (
@@ -129,6 +128,37 @@ export const Whiteboard = () => {
             height={600}
             style={{ border: "1px solid gray", borderRadius: "50px" }}
           />
+        </div>
+        <div>
+          <div className="border border-slate-50 shadow-lg	p-6 rounded-2xl">
+            <Typography.Title
+              level={5}
+              className="!text-gray-500 !font-normal !mb-4"
+            >
+              Brush Size
+            </Typography.Title>
+            <div className="flex gap-x-10">
+              <input
+                id="brushSize"
+                type="range"
+                min="1"
+                max="20"
+                value={brushSize}
+                onChange={handleBrushSizeChange}
+                style={{
+                  appearance: "none",
+                  width: "100%",
+                  height: "6px",
+                  background: "#4db6ac",
+                  outline: "none",
+                  opacity: 0.7,
+                  borderRadius: "5px",
+                  transition: "opacity 0.2s",
+                }}
+              />
+              <span className="text-teal-800 mt-[-8px]">{brushSize}px</span>
+            </div>
+          </div>
         </div>
       </div>
       {/* <button onClick={handleClear}>Clear</button> */}
