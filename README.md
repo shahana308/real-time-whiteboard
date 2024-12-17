@@ -18,7 +18,7 @@ This project is a real-time collaborative whiteboard, allowing users to draw and
 
 The project is deployed and accessible at:
 
-[https://real-time-whiteboard-sand.vercel.app/whiteboard](https://real-time-whiteboard-sand.vercel.app/whiteboard)
+[https://real-time-whiteboard-sand.vercel.app](https://real-time-whiteboard-sand.vercel.app)
 
 ## Tech Stack
 
@@ -41,7 +41,7 @@ The project is deployed and accessible at:
    ```sh
    npm run dev
    ```
-4. Open your browser and navigate to `http://localhost:3000/whiteboard` to use the whiteboard locally.
+4. Open your browser and navigate to `http://localhost:3000` to use the whiteboard locally.
 
 ## Usage
 
