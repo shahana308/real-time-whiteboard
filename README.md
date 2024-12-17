@@ -43,11 +43,20 @@ The project is deployed and accessible at:
    ```
 4. Open your browser and navigate to `http://localhost:3000` to use the whiteboard locally.
 
-## Usage
+## 🚀 Usage
 
-- Open the whiteboard in your browser and start drawing.
-- Select colors and brush types to customize your drawing experience.
-- Invite others to join and collaborate in real time by sharing the deployment link.
+1. **Open the Whiteboard**  
+   Start a new session or join an existing one.
+
+2. **Draw and Customize**  
+   Use colors, brush sizes, and pencil types to enhance your drawing.
+
+3. **Collaborate in Real Time**  
+   Share the session link with others to draw together live.
+
+4. **Create or Join a Session**  
+   - **Start New**: Click **"Start New Whiteboard"** to generate a link.  
+   - **Join**: Paste an existing link into the form and join the session.
 
 ## Contributions
 
