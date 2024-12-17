@@ -28,32 +28,28 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  socket.on("draw", (data) => {
-    console.log("Draw event received:", data);
-    socket.broadcast.emit("draw", data);
+  // Join a session/room
+  socket.on("joinSession", ({ sessionId }) => {
+    socket.join(sessionId);
+    console.log(`User joined session: ${sessionId}`);
   });
 
-  socket.on("startDrawing", () => {
-    console.log("Start drawing event received");
-    socket.broadcast.emit("startDrawing");
+  // Handle drawing event (scoped to session)
+  socket.on("draw", ({ sessionId, xPercent, yPercent, color, size, type }) => {
+    console.log(`Draw in session ${sessionId} by ${socket.id}`);
+    socket
+      .to(sessionId)
+      .emit("draw", { xPercent, yPercent, color, size, type });
   });
 
-  // Broadcast end of drawing to other clients
-  socket.on("endDrawing", () => {
-    console.log("End drawing event received");
-    socket.broadcast.emit("endDrawing");
+  // Handle begin path event (scoped to session)
+  socket.on("beginPath", ({ sessionId }) => {
+    socket.to(sessionId).emit("beginPath");
   });
 
-  // Broadcast begin path to reset paths on other clients
-  socket.on("beginPath", (data) => {
-    console.log("Begin path event received:", data);
-    socket.broadcast.emit("beginPath", data);
-  });
-
-  // Broadcast clear action to all clients
-  socket.on("clear", () => {
-    console.log("Clear event received");
-    socket.broadcast.emit("clear");
+  // Handle clear event (scoped to session)
+  socket.on("clear", ({ sessionId }) => {
+    socket.to(sessionId).emit("clear");
   });
 
   socket.on("disconnect", () => {

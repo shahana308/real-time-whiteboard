@@ -1,19 +1,20 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import socket from "../../socket";
+import { useParams } from "next/navigation"; // Extract params from URL
 import SwatchColorPicker from "./SwatchColorPicker";
 import CircleColorPicker from "./CircleColorPicker";
 import { Typography } from "antd";
 
 export const Whiteboard = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const { sessionId } = useParams();
   const [drawing, setDrawing] = useState(false);
-  const [color, setColor] = useState("#000000"); // Default color
-  const [brushSize, setBrushSize] = useState(5); // Default brush size
-  const [pencilType, setPencilType] = useState("normal"); // Default pencil type
+  const [color, setColor] = useState("#000000");
+  const [brushSize, setBrushSize] = useState(5);
+  const [pencilType, setPencilType] = useState("normal");
 
   const setDrawingStyles = (ctx: CanvasRenderingContext2D) => {
-    // Set brush styles depending on brush type
     ctx.lineWidth = brushSize;
     ctx.lineCap = "round";
     ctx.strokeStyle = color;
@@ -33,38 +34,45 @@ export const Whiteboard = () => {
   };
 
   useEffect(() => {
+    if (!sessionId) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const context = canvas.getContext("2d");
     if (!context) return;
 
+    // Connect to the session
+    socket.emit("joinSession", { sessionId });
+    console.log(`Connected to session: ${sessionId}`);
+
     const handleMouseDown = (e: MouseEvent) => {
       setDrawing(true);
-      context.beginPath(); // Start a new path
+      context.beginPath();
       const xPercent = (e.clientX - canvas.offsetLeft) / canvas.width;
       const yPercent = (e.clientY - canvas.offsetTop) / canvas.height;
       context.moveTo(xPercent * canvas.width, yPercent * canvas.height);
-      socket.emit("beginPath");
+      socket.emit("beginPath", { sessionId });
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (drawing) {
-        const xPercent = (e.clientX - canvas.offsetLeft) / canvas.width;
-        const yPercent = (e.clientY - canvas.offsetTop) / canvas.height;
-        setDrawingStyles(context); // Apply styles before drawing
-        const x = xPercent * canvas.width;
-        const y = yPercent * canvas.height;
-        context.lineTo(x, y);
-        context.stroke();
-        socket.emit("draw", {
-          xPercent,
-          yPercent,
-          color,
-          size: brushSize,
-          type: pencilType,
-        });
-      }
+      if (!drawing) return;
+      const xPercent = (e.clientX - canvas.offsetLeft) / canvas.width;
+      const yPercent = (e.clientY - canvas.offsetTop) / canvas.height;
+      setDrawingStyles(context);
+      const x = xPercent * canvas.width;
+      const y = yPercent * canvas.height;
+      context.lineTo(x, y);
+      context.stroke();
+
+      socket.emit("draw", {
+        sessionId,
+        xPercent,
+        yPercent,
+        color,
+        size: brushSize,
+        type: pencilType,
+      });
     };
 
     const handleMouseUp = () => {
@@ -72,45 +80,33 @@ export const Whiteboard = () => {
       context.closePath();
     };
 
-    const handleClear = () => {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      socket.emit("clear");
-    };
-
-    // Socket event listeners
     socket.on("draw", (data) => {
-      const { xPercent, yPercent, color: drawColor, size, type } = data;
-      setDrawingStyles(context); // Apply styles before drawing
+      const { xPercent, yPercent, color, size } = data;
+      setDrawingStyles(context);
       context.lineWidth = size;
-      context.strokeStyle = drawColor;
-      if (type === "blurred") {
-        context.shadowBlur = 10;
-        context.shadowColor = drawColor;
-      } else {
-        context.shadowBlur = 0;
-      }
-      if (type === "dotted") {
-        context.setLineDash([10, 10]);
-      } else {
-        context.setLineDash([]);
-      }
+      context.strokeStyle = color;
       const x = xPercent * canvas.width;
       const y = yPercent * canvas.height;
       context.lineTo(x, y);
       context.stroke();
     });
 
-    socket.on("clear", handleClear);
+    socket.on("clear", () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
     socket.on("beginPath", () => {
       context.beginPath();
     });
 
-    // Canvas mouse event listeners
     canvas.addEventListener("mousedown", handleMouseDown);
     canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseup", handleMouseUp);
 
     return () => {
+      socket.off("draw");
+      socket.off("clear");
+      socket.off("beginPath");
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseup", handleMouseUp);
@@ -135,7 +131,7 @@ export const Whiteboard = () => {
 
   return (
     <div className="m-10">
-      <Typography.Title>Whiteboard</Typography.Title>
+      <Typography.Title>Whiteboard - Session: {sessionId}</Typography.Title>
       <div className="flex gap-x-20">
         <div className="flex flex-col gap-y-10">
           <div className="border border-slate-50 shadow-lg p-6 rounded-2xl">
