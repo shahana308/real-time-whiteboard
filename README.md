@@ -62,6 +62,3 @@ The project is deployed and accessible at:
 
 Contributions are welcome! If you'd like to improve or add features, please fork the repository and submit a pull request.
 
-## License
-
-This project is licensed under the MIT License.
