@@ -1,1 +1,1 @@
-export { CreateWhiteboard as default } from "../screens/CreateWhiteboard";
+export { CreateWhiteboard as default } from "../screens/CreateWhiteboard.page";
