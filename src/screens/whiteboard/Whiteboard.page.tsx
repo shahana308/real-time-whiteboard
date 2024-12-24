@@ -4,7 +4,7 @@ import socket from "../../socket";
 import { useParams } from "next/navigation"; // Extract params from URL
 import SwatchColorPicker from "./SwatchColorPicker";
 import CircleColorPicker from "./CircleColorPicker";
-import { Typography } from "antd";
+import { Typography, Row, Col } from "antd";
 
 export const Whiteboard = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -130,11 +130,13 @@ export const Whiteboard = () => {
   };
 
   return (
-    <div className="m-10">
-      <Typography.Title>Whiteboard - Session: {sessionId}</Typography.Title>
-      <div className="flex gap-x-20">
-        <div className="flex flex-col gap-y-10">
-          <div className="border border-slate-50 shadow-lg p-6 rounded-2xl">
+    <div className="m-4">
+      <Typography.Title className="text-center mb-6">
+        Whiteboard - Session: {sessionId}
+      </Typography.Title>
+      <Row gutter={[16, 16]} justify="center">
+        <Col xs={24} sm={12} md={6} lg={6}>
+          <div className="border border-slate-50 shadow-lg p-6 rounded-2xl mb-4">
             <SwatchColorPicker
               color={color}
               onColorChange={handleColorChange}
@@ -146,66 +148,60 @@ export const Whiteboard = () => {
               onColorChange={handleColorChange}
             />
           </div>
-        </div>
-        <div>
+        </Col>
+        <Col xs={24} sm={24} md={12} lg={12}>
           <canvas
             ref={canvasRef}
             width={800}
             height={600}
-            style={{ border: "1px solid gray", borderRadius: "50px" }}
+            className="w-full max-w-full h-auto border border-gray-300 rounded-lg"
+            style={{ borderRadius: "10px", zIndex: 1 }}
           />
-        </div>
-        <div>
-          <div className="border border-slate-50 shadow-lg p-6 rounded-2xl">
-            <Typography.Title
-              level={5}
-              className="!text-gray-500 !font-normal !mb-4"
-            >
-              Brush Size
-            </Typography.Title>
-            <div className="flex gap-x-10">
-              <input
-                id="brushSize"
-                type="range"
-                min="1"
-                max="20"
-                value={brushSize}
-                onChange={handleBrushSizeChange}
-                style={{
-                  appearance: "none",
-                  width: "100%",
-                  height: "6px",
-                  background: "#4db6ac",
-                  outline: "none",
-                  opacity: 0.7,
-                  borderRadius: "5px",
-                  transition: "opacity 0.2s",
-                }}
-              />
-              <span className="text-teal-800 mt-[-8px]">{brushSize}px</span>
+        </Col>
+        <Col xs={24} sm={12} md={6} lg={6}>
+          <div className="border border-slate-50 shadow-lg p-6 rounded-2xl mb-4">
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex-1">
+                <Typography.Title
+                  level={5}
+                  className="!text-gray-500 !font-normal !mb-2"
+                >
+                  Brush Size
+                </Typography.Title>
+                <div className="flex gap-x-4 items-center">
+                  <input
+                    id="brushSize"
+                    type="range"
+                    min="1"
+                    max="20"
+                    value={brushSize}
+                    onChange={handleBrushSizeChange}
+                    className="w-full appearance-none h-2 bg-teal-500 rounded-lg outline-none transition-opacity"
+                  />
+                  <span className="text-teal-800">{brushSize}px</span>
+                </div>
+              </div>
+              <div className="flex-1">
+                <Typography.Title
+                  level={5}
+                  className="!text-gray-500 !font-normal !mb-2"
+                >
+                  Pencil Type
+                </Typography.Title>
+                <select
+                  value={pencilType}
+                  onChange={(e) => handlePencilTypeChange(e.target.value)}
+                  className="w-full border border-[#009688] focus:outline-none focus:ring-0 p-2 rounded-lg"
+                >
+                  <option value="normal">Normal</option>
+                  <option value="blurred">Blurred</option>
+                  <option value="dotted">Dotted</option>
+                </select>
+              </div>
             </div>
           </div>
-
-          <div className="border border-slate-50 shadow-lg p-6 rounded-2xl mt-10">
-            <Typography.Title
-              level={5}
-              className="!text-gray-500 !font-normal !mb-4"
-            >
-              Pencil Type
-            </Typography.Title>
-            <select
-              value={pencilType}
-              onChange={(e) => handlePencilTypeChange(e.target.value)}
-              className="border border-[#009688] focus:outline-none focus:ring-0  p-2 rounded-lg"
-              style={{ width: "100%" }}
-            >
-              <option value="normal">Normal</option>
-              <option value="blurred">Blurred</option>
-              <option value="dotted">Dotted</option>
-            </select>
-          </div>
-        </div>
-      </div>
+        </Col>
+      </Row>
     </div>
   );
 };

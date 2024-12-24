@@ -24,6 +24,10 @@ const SwatchColorPicker = ({
     ["#000000", "#212121", "#424242"], // Black to medium gray
   ];
 
+  const isIpad = window.matchMedia(
+    "(min-width: 768px) and (max-width: 1024px)"
+  ).matches;
+
   return (
     <div>
       <Typography.Title level={5} className="!text-gray-500 !font-normal !mb-4">
@@ -34,6 +38,7 @@ const SwatchColorPicker = ({
         styles={{
           default: {
             picker: {
+              width: isIpad ? 120 : "auto",
               boxShadow: "none",
             },
           },
