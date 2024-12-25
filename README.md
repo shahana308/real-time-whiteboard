@@ -58,6 +58,15 @@ The project is deployed and accessible at:
    - **Start New**: Click **"Start New Whiteboard"** to generate a link.  
    - **Join**: Paste an existing link into the form and join the session.
 
+## Future Plans
+
+- **Responsive Design**:
+  
+  Enhance the whiteboard's UI and layout to ensure it is fully responsive and functional on different screen sizes and devices, including tablets and smartphones.  
+  - Optimize canvas rendering for smaller screens.  
+  - Adjust UI components for touch interactions.  
+  - Ensure a seamless experience on both portrait and landscape orientations.
+
 ## Contributions
 
 Contributions are welcome! If you'd like to improve or add features, please fork the repository and submit a pull request.
