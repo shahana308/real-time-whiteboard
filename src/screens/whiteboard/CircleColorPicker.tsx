@@ -34,10 +34,6 @@ const CircleColorPicker = ({
   color: string;
   onColorChange: (color: { hex: React.SetStateAction<string> }) => void;
 }) => {
-  const isIpad = window.matchMedia(
-    "(min-width: 768px) and (max-width: 1024px)"
-  ).matches;
-
   return (
     <div>
       <Typography.Title level={5} className="!text-gray-500 !font-normal !mb-6">
@@ -47,7 +43,7 @@ const CircleColorPicker = ({
         color={color}
         onChangeComplete={onColorChange}
         colors={colors}
-        width={isIpad ? "120px" : "300px"}
+        width="300px"
       />
     </div>
   );
