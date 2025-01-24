@@ -13,6 +13,7 @@ This project is a real-time collaborative whiteboard, allowing users to draw and
   - Dotted
 - **Clear Canvas**: Users can clear the entire whiteboard with a single button.
 - **Simple UI**: The user interface is clean, with easy access to all tools, including color pickers, brush settings, and more.
+<img width="1728" alt="image" src="https://github.com/user-attachments/assets/46a59d48-ec60-4d58-a755-2fd36e6021a3" />
 
 ## Deployment
 
