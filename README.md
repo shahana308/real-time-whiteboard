@@ -44,7 +44,7 @@ The project is deployed and accessible at:
    ```
 4. Open your browser and navigate to `http://localhost:3000` to use the whiteboard locally.
 
-## 🚀 Usage
+## Usage
 
 1. **Open the Whiteboard**  
    Start a new session or join an existing one.
