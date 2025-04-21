@@ -43,10 +43,7 @@ export const Whiteboard = () => {
     if (!context) return;
 
     // Connect to the session
-    socket.on("connect", () => {
-      socket.emit("joinSession", { sessionId });
-      console.log(`Connected & joined session: ${sessionId}`);
-    });
+    socket.emit("joinSession", { sessionId });
     console.log(`Connected to session: ${sessionId}`);
 
     const handleMouseDown = (e: MouseEvent) => {
