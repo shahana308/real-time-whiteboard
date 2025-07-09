@@ -13,6 +13,7 @@ This project is a real-time collaborative whiteboard, allowing users to draw and
   - Dotted
 - **Clear Canvas**: Users can clear the entire whiteboard with a single button.
 - **Simple UI**: The user interface is clean, with easy access to all tools, including color pickers, brush settings, and more.
+<img width="1728" alt="image" src="https://github.com/user-attachments/assets/46a59d48-ec60-4d58-a755-2fd36e6021a3" />
 
 ## Deployment
 
@@ -43,7 +44,7 @@ The project is deployed and accessible at:
    ```
 4. Open your browser and navigate to `http://localhost:3000` to use the whiteboard locally.
 
-## 🚀 Usage
+## Usage
 
 1. **Open the Whiteboard**  
    Start a new session or join an existing one.
@@ -57,6 +58,15 @@ The project is deployed and accessible at:
 4. **Create or Join a Session**  
    - **Start New**: Click **"Start New Whiteboard"** to generate a link.  
    - **Join**: Paste an existing link into the form and join the session.
+
+## Future Plans
+
+- **Responsive Design**:
+  
+  Enhance the whiteboard's UI and layout to ensure it is fully responsive and functional on different screen sizes and devices, including tablets and smartphones.  
+  - Optimize canvas rendering for smaller screens.  
+  - Adjust UI components for touch interactions.  
+  - Ensure a seamless experience on both portrait and landscape orientations.
 
 ## Contributions
 
