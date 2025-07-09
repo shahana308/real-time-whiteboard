@@ -4,7 +4,7 @@ import socket from "../../socket";
 import { useParams } from "next/navigation"; // Extract params from URL
 import SwatchColorPicker from "./SwatchColorPicker";
 import CircleColorPicker from "./CircleColorPicker";
-import { Typography } from "antd";
+import { Spin, Typography } from "antd";
 
 export const Whiteboard = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -13,6 +13,7 @@ export const Whiteboard = () => {
   const [color, setColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(5);
   const [pencilType, setPencilType] = useState("normal");
+  const [connecting, setConnecting] = useState(true);
 
   const setDrawingStyles = (ctx: CanvasRenderingContext2D) => {
     ctx.lineWidth = brushSize;
@@ -45,6 +46,7 @@ export const Whiteboard = () => {
     // Connect to the session
     socket.on("connect", () => {
       socket.emit("joinSession", { sessionId });
+      setConnecting(false);
       console.log(`Connected & joined session: ${sessionId}`);
     });
     console.log(`Connected to session: ${sessionId}`);
@@ -134,6 +136,11 @@ export const Whiteboard = () => {
 
   return (
     <div className="m-10">
+      {connecting && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-white bg-opacity-80 z-50">
+          <Spin size="large">Connecting to whiteboard</Spin>
+        </div>
+      )}
       <Typography.Title>Whiteboard - Session: {sessionId}</Typography.Title>
       <div className="flex gap-x-20">
         <div className="flex flex-col gap-y-10">
